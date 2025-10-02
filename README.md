@@ -2,7 +2,7 @@
 an assembly language coded in c#
 
 
-#instructions
+# instructions
 todo: actually document it
 
-#THIS IS NOT TURING COMPLETE!!! JUMP CONDITIONALS ARE WIP
+# THIS IS NOT TURING COMPLETE!!! JUMP CONDITIONALS ARE WIP

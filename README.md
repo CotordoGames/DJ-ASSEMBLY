@@ -3,6 +3,38 @@ an assembly language coded in c#
 
 
 # instructions
-todo: actually document it
+
+## LoadI
+
+"LoadI" stands for "load immediate value", meaning you set a register to a value that you choose directly.
+
+## SwapR
+
+"SwapR" stands for "swap register value", which is loading a value from the other register into the specified one
+
+## StoreI
+
+"StoreI" stands for "store immediate value", maening that you can just any address to any value from 0-255
+
+## StoreR
+
+"StoreR" stands for "store register value", which sets the specified address to the value of the specified register
+
+## jump
+
+jump to the specified line
+
+## add
+
+adds 2 values and sets them to the specified address
+
+## sub
+
+see add but with subtraction
+
+## LoadA
+
+"LoadA" stands for "load address value", which means you can set a register to have the value of the specified adress
+
 
 # THIS IS NOT TURING COMPLETE!!! JUMP CONDITIONALS ARE WIP

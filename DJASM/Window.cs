@@ -12,7 +12,12 @@ namespace DJASM
 {
     class WindowCreation
     {
-         static Color[] pallete = new Color[32];
+        static Color[] pallete = new Color[32];
+        static Color[] rawframebuffer;
+        static Texture2D framebuffertexture;
+
+        static int winw = 224;
+        static int winh = 160;
 
         static public void CreateWindow()
         {
@@ -58,20 +63,16 @@ namespace DJASM
             pallete[31] = new Color(255, 255, 255, 255);
 
 
-            Raylib.InitWindow(1792, 1280, "DJASM PROGRAM");
-            Raylib.SetTargetFPS(1000);
+            Raylib.InitWindow(winw * 4, winh * 4, "DJASM PROGRAM");
+
+            rawframebuffer = new Color[winw * winh];
+
+
+            framebuffertexture = Raylib.LoadTextureFromImage(Raylib.GenImageColor(winw, winh, Color.Black));
         }
 
         static public void UpdateScreen()
         {
-            
-            int winw = 224;
-            int winh = 160;
-            Raylib.BeginDrawing();
-
-
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.Black);
 
             for (int y = 0; y < winh; y++)
             {
@@ -79,9 +80,17 @@ namespace DJASM
                 {
                     int addr = y * winw + x; // map (x,y) → RAM index
                     byte colorIndex = Program.RAM[addr];
-                    Raylib.DrawRectangle(x * 8, y * 8, 8, 8, pallete[colorIndex]);
+                    rawframebuffer[addr] = pallete[colorIndex];
                 }
             }
+
+
+            Raylib.UpdateTexture(framebuffertexture, rawframebuffer);
+
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Color.Black);
+
+            Raylib.DrawTexturePro(framebuffertexture, new Rectangle(0, 0, winw, winh), new Rectangle(0, 0, winw * 4, winh * 4), new System.Numerics.Vector2(0, 0), 0f, Color.White);
 
             Raylib.EndDrawing();
         }

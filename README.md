@@ -36,5 +36,12 @@ see add but with subtraction
 
 "LoadA" stands for "load address value", which means you can set a register to have the value of the specified adress
 
+## draw
 
-# THIS IS NOT TURING COMPLETE!!! JUMP CONDITIONALS ARE WIP
+updates the screen
+
+## JumpZ
+
+jumps to a specific line if the adress' value is 0
+
+# THIS IS NOT TURING COMPLETE!!! DEREFERENCING IS A WIP

@@ -24,6 +24,7 @@ namespace DJASM
             Add, //adds 2 numbers (addr, addr, out)
             Sub, //subtracts a from b (addr, addr)
             delay, //delays instruction exectution by x ticks
+            ResolutionShift, //shifts the resolution by 1, giving an isometric perspection shift
             NoOp
         }
 
@@ -63,6 +64,7 @@ namespace DJASM
                     "add" => InstructionType.Add,
                     "loada" => InstructionType.loadA,
                     "delay" => InstructionType.delay,
+                    "rshift" => InstructionType.ResolutionShift,
                     _ => InstructionType.NoOp,
                 };
                 instructions.Add(new Instruction(type, tokens));
@@ -72,7 +74,7 @@ namespace DJASM
 
         static void ExecuteInstructions(List<Instruction> instructions, byte[] RAM)
         {
-            int printaddr = 16383;
+            int printaddr = 65535;
             byte r1 = 0;
             byte r2 = 0;
             int idx = 0;
@@ -141,17 +143,6 @@ namespace DJASM
                         idx = Convert.ToUInt16(parts[1]);
                         break;
 
-                    case InstructionType.jumpZ:
-                        if (Convert.ToUInt16(parts[1]) == 0)
-                        {
-                            idx = Convert.ToUInt16(parts[1]);
-                        }
-                        else
-                        {
-                            idx++;
-                        }
-                        break;
-
                     case InstructionType.Add:
                         RAM[Convert.ToInt16(parts[3])] = Convert.ToByte(Convert.ToByte(parts[1]) + Convert.ToByte(parts[2]));
                         idx++;
@@ -175,6 +166,23 @@ namespace DJASM
 
                     case InstructionType.delay:
                         Thread.Sleep(Convert.ToUInt16(parts[1]));
+                        idx++;
+                        break;
+
+
+                    case InstructionType.jumpZ:
+                        if (RAM[Convert.ToInt16(parts[1])] == 0)
+                        {
+                            idx = Convert.ToInt16(parts[1]);
+                        }
+                        else
+                        {
+                            idx++;
+                        }
+                        break;
+
+                    case InstructionType.ResolutionShift:
+                        WindowCreation.winw = Convert.ToInt16(parts[1]);
                         idx++;
                         break;
                 }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 using DJASM;
 using Raylib_cs;
 
@@ -16,8 +13,8 @@ namespace DJASM
         static Color[] rawframebuffer;
         static Texture2D framebuffertexture;
 
-        static int winw = 224;
-        static int winh = 160;
+        public static int winw = 128;
+        static int winh = 96;
 
         static public void CreateWindow()
         {
@@ -63,7 +60,7 @@ namespace DJASM
             pallete[31] = new Color(255, 255, 255, 255);
 
 
-            Raylib.InitWindow(winw * 4, winh * 4, "DJASM PROGRAM");
+            Raylib.InitWindow(winw * 8, winh * 8, "DJASM PROGRAM");
 
             rawframebuffer = new Color[winw * winh];
 
@@ -79,8 +76,10 @@ namespace DJASM
                 for (int x = 0; x < winw; x++)
                 {
                     int addr = y * winw + x; // map (x,y) → RAM index
-                    byte colorIndex = Program.RAM[addr];
+                    byte colorIndex = (byte)(Program.RAM[addr] & 0b00011111);
                     rawframebuffer[addr] = pallete[colorIndex];
+
+                    
                 }
             }
 
@@ -90,9 +89,13 @@ namespace DJASM
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Black);
 
-            Raylib.DrawTexturePro(framebuffertexture, new Rectangle(0, 0, winw, winh), new Rectangle(0, 0, winw * 4, winh * 4), new System.Numerics.Vector2(0, 0), 0f, Color.White);
+            Raylib.DrawTexturePro(framebuffertexture, new Rectangle(0, 0, winw, winh), new Rectangle(0, 0, winw * 8, winh * 8), new System.Numerics.Vector2(0, 0), 0f, Color.White);
 
             Raylib.EndDrawing();
         }
+
+
     }
+
+    
 }

@@ -6324,6 +6324,7 @@ storei 6269 3
 storei 6270 3
 storei 6271 3
 ; end scanline 48
+storei 6271 31
 storei 6272 3
 storei 6273 3
 storei 6274 3
@@ -12387,3 +12388,4 @@ storei 12285 3
 storei 12286 3
 storei 12287 3
 ; end scanline 95
+jump 0

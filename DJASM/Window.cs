@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using DJASM;
 using Raylib_cs;
@@ -61,7 +62,6 @@ namespace DJASM
 
 
             Raylib.InitWindow(winw * 8, winh * 8, "DJASM PROGRAM");
-
             rawframebuffer = new Color[winw * winh];
 
 
@@ -71,17 +71,18 @@ namespace DJASM
         static public void UpdateScreen()
         {
 
-            for (int y = 0; y < winh; y++)
+            for(int i = 0; i < winw * winh; i++)
             {
-                for (int x = 0; x < winw; x++)
-                {
-                    int addr = y * winw + x; // map (x,y) → RAM index
-                    byte colorIndex = (byte)(Program.RAM[addr] & 0b00011111);
-                    rawframebuffer[addr] = pallete[colorIndex];
-
-                    
-                }
+                byte colorIndex = (byte)(Program.RAM[i] & 0b00011111);
+                rawframebuffer[i] = pallete[colorIndex];
             }
+
+
+
+            Color[] ptr = rawframebuffer;
+            Raylib.UpdateTexture(framebuffertexture, ptr);
+
+            
 
 
             Raylib.UpdateTexture(framebuffertexture, rawframebuffer);

@@ -25,6 +25,7 @@ namespace DJASM
             Sub, //subtracts a from b (addr, addr)
             delay, //delays instruction exectution by x ticks
             ResolutionShift, //shifts the resolution by 1, giving an isometric perspection shift
+            DrawScreen,
             NoOp
         }
 
@@ -65,6 +66,7 @@ namespace DJASM
                     "loada" => InstructionType.loadA,
                     "delay" => InstructionType.delay,
                     "rshift" => InstructionType.ResolutionShift,
+                    "draw" => InstructionType.DrawScreen,
                     _ => InstructionType.NoOp,
                 };
                 instructions.Add(new Instruction(type, tokens));
@@ -185,9 +187,13 @@ namespace DJASM
                         WindowCreation.winw = Convert.ToInt16(parts[1]);
                         idx++;
                         break;
-                }
-                WindowCreation.UpdateScreen();
 
+                    case InstructionType.DrawScreen:
+                        WindowCreation.UpdateScreen();
+                        idx++ ; break;
+                }
+
+                
 
             }
         }

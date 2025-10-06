@@ -14,7 +14,7 @@ namespace DJASM
         static Color[] rawframebuffer;
         static Texture2D framebuffertexture;
 
-        public static int winw = 256;
+        public static int winw = 128;
         public static int winh = 96;
 
         static public void CreateWindow()
@@ -107,3 +107,4 @@ namespace DJASM
 
     
 }
+

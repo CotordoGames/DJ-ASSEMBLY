@@ -18,14 +18,12 @@ namespace DJASM
             loadA, // loads the value of an adress into the selected register
             jump, //jumps to the specified line
             jumpZ, //jumps to the specified line if (addr) is 0
-            jumpL, //jumps id less than (addr)
-            jumpG, //jumps if greater than (addr)
-            jumpE, //jumps if equal to (addr)
             Add, //adds 2 numbers (addr, addr, out)
             Sub, //subtracts a from b (addr, addr)
             delay, //delays instruction exectution by x ticks
             ResolutionShift, //shifts the resolution by 1, giving an isometric perspection shift
             DrawScreen,
+            LoadDerefA,
             NoOp
         }
 
@@ -43,12 +41,26 @@ namespace DJASM
         static List<Instruction> ParseDJFile(string file)
         {
             var instructions = new List<Instruction>();
+            var labels = new Dictionary<string, int>();
             var lines = File.ReadAllLines(file);
+
+            int currentidx = 0;
 
             foreach(var rawline in lines)
             {
                 string line = rawline.Split(';')[0].Trim();
                 if (string.IsNullOrWhiteSpace(line)) continue;
+
+
+
+                if (line.EndsWith(":"))
+                {
+                    string lname = line.TrimEnd(':');
+                    labels[lname] = currentidx;
+                    continue;
+                }
+
+
 
                 var tokens = line.Split(' ').ToList();
 
@@ -67,10 +79,25 @@ namespace DJASM
                     "delay" => InstructionType.delay,
                     "rshift" => InstructionType.ResolutionShift,
                     "draw" => InstructionType.DrawScreen,
+                    "loadref" => InstructionType.LoadDerefA,
                     _ => InstructionType.NoOp,
                 };
                 instructions.Add(new Instruction(type, tokens));
+                currentidx++;
             }
+
+            for(int i = 0; i < instructions.Count; i++)
+            {
+                var instr = instructions[i];
+                if ((instr.type == InstructionType.jump || instr.type == InstructionType.jumpZ) && labels.ContainsKey(instr.arguments[1]))
+                {
+                    instr.arguments[1] = labels[instr.arguments[1]].ToString();
+                    instructions[i] = instr;
+                }
+            }
+
+
+
             return instructions;
         }
 
@@ -117,7 +144,7 @@ namespace DJASM
                         break;
 
                     case InstructionType.storeI:
-                        RAM[Convert.ToUInt16(parts[1])] = Convert.ToByte(parts[2]);
+                        RAM[Convert.ToInt32(parts[1])] = Convert.ToByte(parts[2]);
                         if (RAM[0] != 0)
                         {
                             Console.Write((char)RAM[printaddr]);
@@ -128,11 +155,11 @@ namespace DJASM
                     case InstructionType.storeR:
                         if (parts[1].Contains("1"))
                         {
-                            RAM[Convert.ToUInt16(parts[2])] = r1;
+                            RAM[Convert.ToInt32(parts[2])] = r1;
                         }
                         else if (parts[1].Contains("2"))
                         {
-                            RAM[Convert.ToUInt16(parts[2])] = r2;
+                            RAM[Convert.ToInt32(parts[2])] = r2;
                         }
                         if (RAM[printaddr] != 0)
                         {
@@ -142,7 +169,7 @@ namespace DJASM
                         break;
 
                     case InstructionType.jump:
-                        idx = Convert.ToUInt16(parts[1]);
+                        idx = Convert.ToInt32(parts[1]);
                         break;
 
                     case InstructionType.Add:
@@ -153,11 +180,11 @@ namespace DJASM
                     case InstructionType.loadA:
                         if (parts[1].Contains("1"))
                         {
-                            r1 = RAM[Convert.ToUInt16(parts[2])];
+                            r1 = RAM[Convert.ToInt32(parts[2])];
                         }
                         else if (parts[1].Contains("2"))
                         {
-                           r2 = RAM[Convert.ToUInt16(parts[2])];
+                           r2 = RAM[Convert.ToInt32(parts[2])];
                         }
                         if (RAM[printaddr] != 0)
                         {
@@ -167,7 +194,7 @@ namespace DJASM
                         break;
 
                     case InstructionType.delay:
-                        Thread.Sleep(Convert.ToUInt16(parts[1]));
+                        Thread.Sleep(Convert.ToInt32(parts[1]));
                         idx++;
                         break;
 
@@ -191,9 +218,20 @@ namespace DJASM
                     case InstructionType.DrawScreen:
                         WindowCreation.UpdateScreen();
                         idx++ ; break;
+
+                    case InstructionType.LoadDerefA:
+                        if (Convert.ToInt16(parts[1]) == 1)
+                        {
+                            r1 = RAM[RAM[Convert.ToInt16(parts[2])]];
+                        }
+                        else if (Convert.ToInt16(parts[1]) == 2)
+                        {
+                            r2 = RAM[RAM[Convert.ToInt16(parts[2])]];
+                        }
+                        idx++ ; break;
                 }
 
-                
+
 
             }
         }
@@ -201,8 +239,6 @@ namespace DJASM
         public static byte[] RAM = new byte[65536];
         public static void Main()
         {
-            
-
             string FilePath = Path.Combine(Directory.GetCurrentDirectory(), "source.dj");
 
             List<Instruction> Instructions = ParseDJFile(FilePath);

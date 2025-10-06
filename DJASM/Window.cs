@@ -96,8 +96,9 @@ namespace DJASM
 
                 Raylib.EndDrawing();
             }
-            else if (Raylib.WindowShouldClose())
+            else
             {
+                Raylib.UnloadTexture(framebuffertexture);
                 Raylib.CloseWindow();
             }
         }
@@ -107,4 +108,3 @@ namespace DJASM
 
     
 }
-

@@ -44,4 +44,12 @@ updates the screen
 
 jumps to a specific line if the adress' value is 0
 
-# THIS IS NOT TURING COMPLETE!!! DEREFERENCING IS A WIP
+## LoadRef
+
+loads a dereferenced value
+
+## labels
+
+guess, dumbass.
+
+# THIS IS NOT TURING COMPLETE!!! EVEN THOUGH DEREFERENCING IS DONE, ITS STILL PROBABLY IMPOSSIBLE TO PROPERLY PROGRAM FOR

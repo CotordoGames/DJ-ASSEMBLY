@@ -81,8 +81,21 @@ namespace DJASM
 
 
 
-                Color[] ptr = rawframebuffer;
-                Raylib.UpdateTexture(framebuffertexture, ptr);
+                
+
+                unsafe
+                {
+                    if (rawframebuffer.Length != WindowCreation.winw * WindowCreation.winh)
+                    {
+                        rawframebuffer = new Color[WindowCreation.winw * WindowCreation.winh];
+                    }
+                    
+                    fixed (Color* ptr = rawframebuffer)
+                    {
+                        Raylib.UpdateTexture(framebuffertexture, ptr);
+                    }
+                }
+                
 
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using DJASM;
+using Raylib_cs;
 
 
 namespace DJASM
@@ -24,6 +25,7 @@ namespace DJASM
             ResolutionShift, //shifts the resolution by 1, giving an isometric perspection shift
             DrawScreen,
             LoadDerefA,
+            JumpE,
             NoOp
         }
 
@@ -80,6 +82,7 @@ namespace DJASM
                     "rshift" => InstructionType.ResolutionShift,
                     "draw" => InstructionType.DrawScreen,
                     "loadref" => InstructionType.LoadDerefA,
+                    "jumpe" => InstructionType.JumpE,
                     _ => InstructionType.NoOp,
                 };
                 instructions.Add(new Instruction(type, tokens));
@@ -107,6 +110,7 @@ namespace DJASM
             byte r1 = 0;
             byte r2 = 0;
             int idx = 0;
+            byte userin = 0b00000000;
             while(idx < instructions.Count)
             {
                 var instr = instructions[idx];
@@ -230,9 +234,51 @@ namespace DJASM
                         }
                         idx++ ; break;
 
-                    
+                    case InstructionType.JumpE:
+                        if (Convert.ToInt32(parts[3]) == 1 && RAM[Convert.ToInt16(parts[1])] == r1)
+                        {
+                            idx = Convert.ToInt32(parts[2]);
+                        }
+                        else if (Convert.ToInt32(parts[3]) == 2 && RAM[Convert.ToInt16(parts[1])] == r2)
+                        {
+                            idx = Convert.ToInt32(parts[2]);
+                        }
+                        else
+                        {
+                            idx++;
+                        }
+                        break;
+
+
                 }
 
+                if (Raylib.IsKeyDown(KeyboardKey.Z))
+                {
+                    userin = (byte)(userin | 0b10000000);
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.X))
+                {
+                    userin = (byte)(userin | 0b01000000);
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.Left))
+                {
+                    userin = (byte)(userin | 0b00100000);
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.Right))
+                {
+                    userin = (byte)(userin | 0b00010000);
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.Up))
+                {
+                    userin = (byte)(userin | 0b00001000);
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.Up))
+                {
+                    userin = (byte)(userin | 0b00000100);
+                }
+
+
+                RAM[12289] = userin;
 
 
             }

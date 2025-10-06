@@ -229,6 +229,8 @@ namespace DJASM
                             r2 = RAM[RAM[Convert.ToInt16(parts[2])]];
                         }
                         idx++ ; break;
+
+                    
                 }
 
 

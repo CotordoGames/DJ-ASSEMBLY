@@ -14,8 +14,8 @@ namespace DJASM
         static Color[] rawframebuffer;
         static Texture2D framebuffertexture;
 
-        public static int winw = 128;
-        static int winh = 96;
+        public static int winw = 256;
+        public static int winh = 96;
 
         static public void CreateWindow()
         {
@@ -71,28 +71,35 @@ namespace DJASM
         static public void UpdateScreen()
         {
 
-            for(int i = 0; i < winw * winh; i++)
+            if (!Raylib.WindowShouldClose())
             {
-                byte colorIndex = (byte)(Program.RAM[i] & 0b00011111);
-                rawframebuffer[i] = pallete[colorIndex];
+                for (int i = 0; i < winw * winh; i++)
+                {
+                    byte colorIndex = (byte)(Program.RAM[i] & 0b00011111);
+                    rawframebuffer[i] = pallete[colorIndex];
+                }
+
+
+
+                Color[] ptr = rawframebuffer;
+                Raylib.UpdateTexture(framebuffertexture, ptr);
+
+
+
+
+                Raylib.UpdateTexture(framebuffertexture, rawframebuffer);
+
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Color.Black);
+
+                Raylib.DrawTexturePro(framebuffertexture, new Rectangle(0, 0, winw, winh), new Rectangle(0, 0, winw * 8, winh * 8), new System.Numerics.Vector2(0, 0), 0f, Color.White);
+
+                Raylib.EndDrawing();
             }
-
-
-
-            Color[] ptr = rawframebuffer;
-            Raylib.UpdateTexture(framebuffertexture, ptr);
-
-            
-
-
-            Raylib.UpdateTexture(framebuffertexture, rawframebuffer);
-
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.Black);
-
-            Raylib.DrawTexturePro(framebuffertexture, new Rectangle(0, 0, winw, winh), new Rectangle(0, 0, winw * 8, winh * 8), new System.Numerics.Vector2(0, 0), 0f, Color.White);
-
-            Raylib.EndDrawing();
+            else if (Raylib.WindowShouldClose())
+            {
+                Raylib.CloseWindow();
+            }
         }
 
 

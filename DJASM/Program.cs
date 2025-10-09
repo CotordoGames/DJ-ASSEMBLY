@@ -19,13 +19,15 @@ namespace DJASM
             loadA, // loads the value of an adress into the selected register
             jump, //jumps to the specified line
             jumpZ, //jumps to the specified line if (addr) is 0
-            Add, //adds 2 numbers (addr, addr, out)
+            AddA, //adds 2 numbers (addr, addr, out)
             Sub, //subtracts a from b (addr, addr)
             delay, //delays instruction exectution by x ticks
             ResolutionShift, //shifts the resolution by 1, giving an isometric perspection shift
             DrawScreen,
             LoadDerefA,
             JumpE,
+            AddReg,
+            AddI,
             NoOp
         }
 
@@ -76,13 +78,14 @@ namespace DJASM
                     "storer" => InstructionType.storeR,
                     "jump" => InstructionType.jump,
                     "jumpz" => InstructionType.jumpZ,
-                    "add" => InstructionType.Add,
+                    "adda" => InstructionType.AddA,
                     "loada" => InstructionType.loadA,
                     "delay" => InstructionType.delay,
                     "rshift" => InstructionType.ResolutionShift,
                     "draw" => InstructionType.DrawScreen,
                     "loadref" => InstructionType.LoadDerefA,
                     "jumpe" => InstructionType.JumpE,
+                    "addr" => InstructionType.AddReg,
                     _ => InstructionType.NoOp,
                 };
                 instructions.Add(new Instruction(type, tokens));
@@ -176,8 +179,8 @@ namespace DJASM
                         idx = Convert.ToInt32(parts[1]);
                         break;
 
-                    case InstructionType.Add:
-                        RAM[Convert.ToInt16(parts[3])] = RAM[Convert.ToInt32(parts[1]) + RAM[Convert.ToInt32(parts[2])]];
+                    case InstructionType.AddA:
+                        RAM[Convert.ToInt16(parts[3])] = Convert.ToByte(RAM[Convert.ToInt32(parts[1])] + RAM[Convert.ToInt32(parts[2])]);
                         idx++;
                         break;
 
@@ -249,6 +252,16 @@ namespace DJASM
                         }
                         break;
 
+                    case InstructionType.AddReg:
+                        RAM[Convert.ToInt16(parts[1])] = Convert.ToByte(r1 + r2);
+                        idx++;
+                        break;
+
+                    case InstructionType.AddI:
+                        RAM[Convert.ToInt16(parts[3])] = Convert.ToByte(parts[1] + parts[2]);
+                        idx++;
+                        break;
+
 
                 }
 
@@ -272,10 +285,11 @@ namespace DJASM
                 {
                     userin = (byte)(userin | 0b00001000);
                 }
-                else if (Raylib.IsKeyDown(KeyboardKey.Up))
+                else if (Raylib.IsKeyDown(KeyboardKey.Down))
                 {
                     userin = (byte)(userin | 0b00000100);
                 }
+
 
 
                 RAM[12289] = userin;

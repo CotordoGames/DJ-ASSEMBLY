@@ -1,6 +1,7 @@
+
+<img width="820" height="132" alt="DJASM LOGO" src="https://github.com/user-attachments/assets/82ca2fc2-729c-48a1-bb6e-cee2211681e0" />
 # DJ-ASSEMBLY
 an assembly language coded in c#
-
 
 # instructions
 
